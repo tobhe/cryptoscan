@@ -18,9 +18,10 @@ aes_p="\x63\x7c\x77\x7b|\x52\x09\x6a\xd5" # S-BOX
 chacha_p="expand 32-byte k" 
 curve25519_p="\x00\x00\x00\x78\x00\x00\x00\x59\x00\x00\x00\x13" 
 des_p="\x04\x04\x28\x22"
-sha1_p="\x67\x45\x23\x01|\x01\x23\x45\x67" # INIT_DATA_h0
-sha512_p="\xa2\x4d\x54\x19\xc8\x37\x3d\x8c"
 md5_p="\x01\x23\x45\x67|\x67\x45\x23\x01" # INIT_DATA_A
+sha1_p="\x67\x45\x23\x01|\x01\x23\x45\x67" # INIT_DATA_h0
+sha256_p="\xd8\x9e\x05\xc1"
+sha512_p="\xa2\x4d\x54\x19\xc8\x37\x3d\x8c"
 
 usage() {
 	echo "Usage: cryptscan FILES..."
@@ -36,17 +37,18 @@ run_checks() {
 	local _found=
 
 	# check if any pattern matches
-	if check_regex "$_file" "$aes_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$sha1_p|$sha512_p"; then
+	if check_regex "$_file" "$aes_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$sha1_p|$sha256_p|$sha512_p"; then
 		_found=1;
 	fi;
 	if [[ -n "$_found" ]]; then
 		printf "%-50s\t" "$_file"
 		if check_regex "$_file" "$aes_p"; then echo -n "AES "; fi
-		if check_regex "$_file" "$chacha_p"; then echo -n "chacha20 "; fi
+		if check_regex "$_file" "$chacha_p"; then echo -n "ChaCha20 "; fi
 		if check_regex "$_file" "$curve25519_p"; then echo -n "curve25519 "; fi
 		if check_regex "$_file" "$des_p"; then echo -n "DES "; fi
 		if check_regex "$_file" "$md5_p"; then echo -n "MD5 "; fi
 		if check_regex "$_file" "$sha1_p"; then echo -n "SHA1 "; fi
+		if check_regex "$_file" "$sha256_p"; then echo -n "SHA256 "; fi
 		if check_regex "$_file" "$sha512_p"; then echo -n "SHA512 "; fi
 		echo ""
 	fi
@@ -61,7 +63,7 @@ printf "%-50s\t%s\n" "File" "Primitives"
 printf "====                                               \t==========\n"
 
 for arg in "$@"; do
-	find $arg -print0 | while IFS= read -r -d '' file; do
+	find -H "$arg" -print0 | while IFS= read -r -d '' file; do
 		if [[ -f "$file" ]]; then
 			run_checks "$file"
 		fi
