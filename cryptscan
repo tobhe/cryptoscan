@@ -40,7 +40,7 @@ run_checks() {
 		_found=1;
 	fi;
 	if [[ -n "$_found" ]]; then
-		printf "%-30s\t" "$(basename "$_file")"
+		printf "%-50s\t" "$_file"
 		if check_regex "$_file" "$aes_p"; then echo -n "AES "; fi
 		if check_regex "$_file" "$chacha_p"; then echo -n "chacha20 "; fi
 		if check_regex "$_file" "$curve25519_p"; then echo -n "curve25519 "; fi
@@ -57,8 +57,8 @@ if [[ "$#" -eq 0 ]]; then
 	exit 1
 fi
 
-printf "%-30s\t%s\n" "File" "Primitives"
-printf "====                            =======\n"
+printf "%-50s\t%s\n" "File" "Primitives"
+printf "====                                               \t==========\n"
 
 for arg in "$@"; do
 	find $arg -print0 | while IFS= read -r -d '' file; do
