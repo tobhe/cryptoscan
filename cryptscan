@@ -32,22 +32,22 @@ check_regex() {
 }
 
 run_checks() {
-	local _bin=$1
+	local _file=$1
 	local _found=
 
 	# check if any pattern matches
-	if check_regex "$bin" "$aes_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$sha1_p|$sha512_p"; then
+	if check_regex "$_file" "$aes_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$sha1_p|$sha512_p"; then
 		_found=1;
 	fi;
 	if [[ -n "$_found" ]]; then
-		printf "%-30s\t" "$(basename "$bin")"
-		if check_regex "$bin" "$aes_p"; then echo -n "AES "; fi
-		if check_regex "$bin" "$chacha_p"; then echo -n "chacha20 "; fi
-		if check_regex "$bin" "$curve25519_p"; then echo -n "curve25519 "; fi
-		if check_regex "$bin" "$des_p"; then echo -n "DES "; fi
-		if check_regex "$bin" "$md5_p"; then echo -n "MD5 "; fi
-		if check_regex "$bin" "$sha1_p"; then echo -n "SHA1 "; fi
-		if check_regex "$bin" "$sha512_p"; then echo -n "SHA512 "; fi
+		printf "%-30s\t" "$(basename "$_file")"
+		if check_regex "$_file" "$aes_p"; then echo -n "AES "; fi
+		if check_regex "$_file" "$chacha_p"; then echo -n "chacha20 "; fi
+		if check_regex "$_file" "$curve25519_p"; then echo -n "curve25519 "; fi
+		if check_regex "$_file" "$des_p"; then echo -n "DES "; fi
+		if check_regex "$_file" "$md5_p"; then echo -n "MD5 "; fi
+		if check_regex "$_file" "$sha1_p"; then echo -n "SHA1 "; fi
+		if check_regex "$_file" "$sha512_p"; then echo -n "SHA512 "; fi
 		echo ""
 	fi
 }
@@ -59,8 +59,11 @@ fi
 
 printf "%-30s\t%s\n" "File" "Primitives"
 printf "====                            =======\n"
-for bin in "$@"; do
-	if [[ -f $bin ]]; then
-		run_checks "$bin"
-	fi
+
+for arg in "$@"; do
+	find $arg -print0 | while IFS= read -r -d '' file; do
+		if [[ -f "$file" ]]; then
+			run_checks "$file"
+		fi
+	done
 done
