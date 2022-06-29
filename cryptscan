@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# Copyright (c) 2022 Tobias Heider <me@tobhe.de>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+aes_p="\x63\x7c\x77\x7b|\x52\x09\x6a\xd5" # S-BOX
+chacha_p="expand 32-byte k" 
+curve25519_p="\x00\x00\x00\x78\x00\x00\x00\x59\x00\x00\x00\x13" 
+des_p="\x04\x04\x28\x22"
+sha1_p="\x67\x45\x23\x01|\x01\x23\x45\x67" # INIT_DATA_h0
+sha512_p="\xa2\x4d\x54\x19\xc8\x37\x3d\x8c"
+md5_p="\x01\x23\x45\x67|\x67\x45\x23\x01" # INIT_DATA_A
+
+check_regex() {
+	local _file=$1 _pattern=$2
+	LC_ALL=C grep -qaobUP "$_pattern" "$_file"
+}
+
+run_checks() {
+	local _bin=$1
+	local _found=
+
+	# check if any pattern matches
+	if check_regex "$bin" "$aes_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$sha1_p|$sha512_p"; then
+		_found=1;
+	fi;
+	if [[ -n "$_found" ]]; then
+		printf "%-30s\t" "$(basename "$bin")"
+		if check_regex "$bin" "$aes_p"; then echo -n "AES "; fi
+		if check_regex "$bin" "$chacha_p"; then echo -n "chacha20 "; fi
+		if check_regex "$bin" "$curve25519_p"; then echo -n "curve25519 "; fi
+		if check_regex "$bin" "$des_p"; then echo -n "DES "; fi
+		if check_regex "$bin" "$md5_p"; then echo -n "MD5 "; fi
+		if check_regex "$bin" "$sha1_p"; then echo -n "SHA1 "; fi
+		if check_regex "$bin" "$sha512_p"; then echo -n "SHA512 "; fi
+		echo ""
+	fi
+}
+
+printf "%-30s\t%s\n" "File" "Primitives"
+printf "====                            =======\n"
+for bin in "$@"; do
+	if [[ -f $bin ]]; then
+		run_checks "$bin"
+	fi
+done
