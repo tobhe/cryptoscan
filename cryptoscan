@@ -19,6 +19,7 @@ chacha_p="expand 32-byte k"
 curve25519_p="\x00\x00\x00\x78\x00\x00\x00\x59\x00\x00\x00\x13" 
 des_p="\x04\x04\x28\x22"
 md5_p="\xd7\x6a\xa4\x78|\x78\xa4\x6a\xd7"
+ripemd_p="\xE9\x76\x6d\x7a"
 sha1_p="\x5a\x82\x79\x99|\x99\x79\x82\x5a"
 sha256_p="\xd8\x9e\x05\xc1"
 sha512_p="\xa2\x4d\x54\x19\xc8\x37\x3d\x8c"
@@ -37,7 +38,7 @@ run_checks() {
 	local _found=
 
 	# check if any pattern matches
-	if check_regex "$_file" "$aes_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$sha1_p|$sha256_p|$sha512_p"; then
+	if check_regex "$_file" "$aes_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$ripemd_p|$sha1_p|$sha256_p|$sha512_p"; then
 		_found=1;
 	fi;
 	if [[ -n "$_found" ]]; then
@@ -47,6 +48,7 @@ run_checks() {
 		if check_regex "$_file" "$curve25519_p"; then echo -n "curve25519 "; fi
 		if check_regex "$_file" "$des_p"; then echo -n "DES "; fi
 		if check_regex "$_file" "$md5_p"; then echo -n "MD5 "; fi
+		if check_regex "$_file" "$ripemd_p"; then echo -n "RIPEMD "; fi
 		if check_regex "$_file" "$sha1_p"; then echo -n "SHA1 "; fi
 		if check_regex "$_file" "$sha256_p"; then echo -n "SHA256 "; fi
 		if check_regex "$_file" "$sha512_p"; then echo -n "SHA512 "; fi
