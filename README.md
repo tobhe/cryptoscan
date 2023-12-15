@@ -3,9 +3,9 @@
 cryptoscan is a bash script to check system binaries (like executables or
 shared libraries) for embedded statically linked crypto implementations.
 
-Currently it can detect AES, ChaCha20, Curve25519, DES, MD5, RIPEMD and SHA
-by searching the binaries for well-known constants used within the respective
-algorithms.
+Currently it can detect AES, BLOWFISH,ChaCha20, Curve25519, DES, MD5, RIPEMD,
+SHA, SIPHASH by searching the binaries for well-known constants used within
+the respective algorithms.
 
 ## Usage
 
