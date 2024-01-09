@@ -24,7 +24,9 @@ ripemd_p="\xE9\x76\x6d\x7a|\x7a\x6d\x76\xe9"
 sha1_p="\x5a\x82\x79\x99|\x99\x79\x82\x5a"
 sha256_p="\xd8\x9e\x05\xc1"
 sha512_p="\xa2\x4d\x54\x19\xc8\x37\x3d\x8c"
+sha3_p="\x89\x80\x00\x00\x00\x00\x00\x80|\x00\x00\x00\x00\x08\x00\x08\x90"
 siphash_p="uespemos"
+whirlpool_p="\x18\x18\x60\x18\xc0\x78\x30\xd8|\xd8\x30\x78\xc0\x18\x60\x18\x18"
 
 
 usage() {
@@ -41,7 +43,7 @@ run_checks() {
 	local _found=
 
 	# check if any pattern matches
-	if check_regex "$_file" "$aes_p|$blowfish_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$ripemd_p|$sha1_p|$sha256_p|$sha512_p|$siphash_p"; then
+	if check_regex "$_file" "$aes_p|$blowfish_p|$chacha_p|$curve25519_p|$des_p|$md5_p|$ripemd_p|$sha1_p|$sha256_p|$sha512_p|$sha3_p|$siphash_p|$whirlpool_p"; then
 		_found=1;
 	fi;
 	if [[ -n "$_found" ]]; then
@@ -56,7 +58,9 @@ run_checks() {
 		if check_regex "$_file" "$sha1_p"; then echo -n "SHA1 "; fi
 		if check_regex "$_file" "$sha256_p"; then echo -n "SHA256 "; fi
 		if check_regex "$_file" "$sha512_p"; then echo -n "SHA512 "; fi
+		if check_regex "$_file" "$sha3_p"; then echo -n "SHA3 "; fi
 		if check_regex "$_file" "$siphash_p"; then echo -n "SIPHASH "; fi
+		if check_regex "$_file" "$whirlpool_p"; then echo -n "WHIRLPOOL "; fi
 		echo ""
 	fi
 }
